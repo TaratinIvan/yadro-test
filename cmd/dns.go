@@ -12,7 +12,7 @@ var dnsCmd = &cobra.Command{
 	Short: "List, add or delete dns",
 	Long: `dns -- list all dns
 dns -a -- add dns to list
-dns -d [NUMBER_OF_LINE] -- delete dns in list
+dns -d [DNS_IP] -- delete DNS_IP from list
 `,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("dns called")
