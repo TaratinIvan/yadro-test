@@ -9,13 +9,11 @@ import (
 	"net/http"
 )
 
-// DNSOperation represents the operation to be performed on DNS
 type DNSOperation struct {
-	Action string
-	IP     string
+	Action string `json:"action"`
+	IP     string `json:"ip"`
 }
 
-// dnsCmd represents the dns command
 var dnsCmd = &cobra.Command{
 	Use:   "dns",
 	Short: "List, add or delete DNS",
@@ -59,8 +57,12 @@ dns -d [DNS_IP] -- delete DNS_IP from the list`,
 	},
 }
 
+type dnsList struct {
+	DnsList []string `json:"dnsList"`
+}
+
 func listDNS() ([]string, error) {
-	resp, err := http.Get("http://example.com/api/list-dns")
+	resp, err := http.Get("http://localhost:8080/api/list-dns")
 	if err != nil {
 		return nil, fmt.Errorf("failed to send HTTP request: %v", err)
 	}
@@ -75,13 +77,12 @@ func listDNS() ([]string, error) {
 		return nil, fmt.Errorf("failed to read response body: %v", err)
 	}
 
-	var dnsList []string
-	err = json.Unmarshal(body, &dnsList)
+	var data dnsList
+	err = json.Unmarshal(body, &data)
 	if err != nil {
 		return nil, fmt.Errorf("failed to unmarshal JSON: %v", err)
 	}
-
-	return dnsList, nil
+	return data.DnsList, nil
 }
 
 func modifyDNS(operation DNSOperation) error {
@@ -90,7 +91,7 @@ func modifyDNS(operation DNSOperation) error {
 		return fmt.Errorf("failed to marshal JSON: %v", err)
 	}
 
-	resp, err := http.Post("http://example.com/api/modify-dns", "application/json", bytes.NewBuffer(payload))
+	resp, err := http.Post("http://localhost:8080/api/modify-dns", "application/json", bytes.NewBuffer(payload))
 	if err != nil {
 		return fmt.Errorf("failed to send HTTP request: %v", err)
 	}

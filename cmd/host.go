@@ -10,12 +10,11 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// hostCmd represents the host command
 var hostCmd = &cobra.Command{
 	Use:   "host [NEW_NAME]",
 	Short: "Change host name of service",
 	Long:  `host [NEW_NAME] -- change current host name to NEW_NAME`,
-	Args:  cobra.ExactArgs(1), // Ensure exactly one argument is provided
+	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		newName := args[0]
 		err := changeHostName(newName)
@@ -28,7 +27,7 @@ var hostCmd = &cobra.Command{
 }
 
 func changeHostName(newName string) error {
-	// Create JSON payload
+
 	payload, err := json.Marshal(map[string]string{
 		"hostname": newName,
 	})
@@ -36,8 +35,7 @@ func changeHostName(newName string) error {
 		return fmt.Errorf("failed to marshal JSON: %v", err)
 	}
 
-	// Send HTTP POST request
-	resp, err := http.Post("http://example.com/api/change-hostname", "application/json", bytes.NewBuffer(payload))
+	resp, err := http.Post("http://localhost:8080/api/change-hostname", "application/json", bytes.NewBuffer(payload))
 	if err != nil {
 		return fmt.Errorf("failed to send HTTP request: %v", err)
 	}
@@ -52,14 +50,4 @@ func changeHostName(newName string) error {
 
 func init() {
 	rootCmd.AddCommand(hostCmd)
-
-	// Define your flags and configuration settings here.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// hostCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// hostCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
